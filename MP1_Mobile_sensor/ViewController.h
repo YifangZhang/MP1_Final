@@ -12,7 +12,6 @@
 #import <MessageUI/MFMailComposeViewController.h>
 
 
-
 @interface ViewController : UIViewController <MFMailComposeViewControllerDelegate>
 
 @property (strong, nonatomic) IBOutlet UILabel *acc_x;
@@ -32,13 +31,19 @@
 
 @property CMMotionManager * motionManager;
 
+
 @property NSMutableArray * collectAcc;
 @property NSMutableArray * collectGyro;
 @property NSMutableArray * collectMag;
+@property NSMutableArray * collectTime;
 
 @property NSString *tempFilePath;
 
 @property BOOL flag;
+
+- (IBAction)sum:(id)sender;
+
+@property (strong, nonatomic) IBOutlet UILabel *result;
 
 - (IBAction)switcher:(id)sender;
 - (IBAction)sendMail:(id)sender;

@@ -10,6 +10,8 @@
 
 @interface ViewController () <MFMailComposeViewControllerDelegate>
 
+
+
 @end
 
 @implementation ViewController
@@ -24,10 +26,12 @@
     [self.collectGyro addObject:@"timestamp,Gyro_x,Gyro_y,Gyro_z\n"];
     self.collectMag = [[NSMutableArray alloc] init];
     [self.collectMag addObject:@"timestamp,Mag_x,Mag_y,Mag_z\n"];
+    self.collectTime = [[NSMutableArray alloc] init];
     
     // init the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
-    
+    ///////HERE
+
     
     self.acc_x.text = @"0";
     self.acc_y.text = @"0";
@@ -41,9 +45,10 @@
     
     // Do any additional setup after loading the view, typically from a nib.
     
-    self.motionManager.accelerometerUpdateInterval = 0.01;
-    self.motionManager.gyroUpdateInterval = 0.01;
-    self.motionManager.magnetometerUpdateInterval = 0.01;
+    self.motionManager.accelerometerUpdateInterval = 0.02;
+    self.motionManager.gyroUpdateInterval = 0.02;
+    self.motionManager.magnetometerUpdateInterval = 0.02;
+    
     
     // set the time to the correct format
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
@@ -65,6 +70,84 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+
+- (IBAction)sum:(id)sender {
+    
+    /*int sum = 0;
+    
+    for(NSInteger i = 1; i <self.collectAcc.count; i++){
+        sum = sum + (int)[[self.collectAcc objectAtIndex:i] objectAtIndex:2];
+    }
+    
+    int avg_acc_y = sum/self.collectAcc.count;/*
+    /*sum = 0;
+    for(NSInteger i = 1; i <self.collectAcc.count; i++){
+        sum = sum + (int)[[self.collectAcc objectAtIndex:i] objectAtIndex:3];
+    }
+    
+    int avg_acc_z = sum/self.collectAcc.count;*/
+    NSLog(@"%lu", (unsigned long)self.collectAcc.count);
+    NSString * curAcc = (NSString *)[self.collectAcc objectAtIndex:1];
+    NSLog(@"%@", curAcc);
+    NSArray * curAccSep = [curAcc componentsSeparatedByString:@","];
+    NSLog(@"%@", (NSString *)[curAccSep objectAtIndex:0]);
+    NSLog(@"%f", [(NSString *)[curAccSep objectAtIndex:1] floatValue]);
+    NSLog(@"%f", [(NSString *)[curAccSep objectAtIndex:2] floatValue]);
+    NSLog(@"%f", [(NSString *)[curAccSep objectAtIndex:3] floatValue]);
+//    NSInteger sum_int = [sum integerValue];
+//    NSUInteger arrayLength = [acc_x count];
+//    NSInteger avg = sum_int/arrayLength;
+//    int asdf = 0;
+//    if(arrayLength ==0){
+    //self.result.text = [NSString stringWithFormat:@"%d%d", avg_acc_y, avg_acc_z];
+    
+    
+    //NSMutableArray *y_vals = [[NSMutableArray alloc] init];
+    double y_vals [self.collectAcc.count-1];
+    double z_vals [self.collectAcc.count-1];
+
+    double y_sum = 0;
+    double z_sum = 0;
+    
+    for(NSInteger i = 1; i <self.collectAcc.count; i++){
+        
+        NSString * curAcc_1 = (NSString *)[self.collectAcc objectAtIndex:i];
+        NSArray * curAccSep_1 = [curAcc_1 componentsSeparatedByString:@","];
+        
+        y_vals [i-1] = [(NSString *)[curAccSep_1 objectAtIndex:2] floatValue];
+        y_sum = y_sum + y_vals[i-1];
+        
+        NSString * curAcc_2 = (NSString *)[self.collectAcc objectAtIndex:i];
+        NSArray * curAccSep_2 = [curAcc_2 componentsSeparatedByString:@","];
+        
+        z_vals [i-1] = [(NSString *)[curAccSep_2 objectAtIndex:3] floatValue];
+        z_sum = z_sum + z_vals[i-1];
+
+    }
+    
+    double y_avg = y_sum/(double)self.collectAcc.count;
+    double z_avg = z_sum/(double)self.collectAcc.count;
+    
+    double y_std = 0;
+    double z_std = 0;
+    
+    for(NSInteger j=0; j<(self.collectAcc.count-1); ++j){
+        
+        y_std = y_std + (y_vals[j]-y_avg)*(y_vals[j]-y_avg);
+        z_std = z_std + (z_vals[j]-z_avg)*(z_vals[j]-z_avg);
+    }
+    
+    y_std = sqrt(y_std/(double)self.collectAcc.count);
+    z_std = sqrt(z_std/(double)self.collectAcc.count);
+
+    NSLog(@"y average: %f", y_avg);
+    NSLog(@"y std: %f", y_std);
+    NSLog(@"z std: %f", z_std);
+    
+    
+    
+}
 
 
 - (IBAction)switcher:(id)sender {
@@ -115,6 +198,7 @@
     if ([MFMailComposeViewController canSendMail]) {
         // device is configured to send mail
     
+        
         NSString * writeString = @"";
         for (NSString * acc in self.collectAcc) {
             writeString = [NSString stringWithFormat:@"%@%@", writeString, acc];
@@ -161,7 +245,7 @@
     [dateFormatter setDateFormat:@"dd-MM-yy_HH-mm-ss.SSS"];
     [dateFormatter setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     self.timestamp.text = [dateFormatter stringFromDate:[NSDate date]];
-    [self.collectAcc addObject:[NSString stringWithFormat:@"%@,%@,%@,%@\n", self.timestamp.text, self.acc_x.text, self.acc_y.text, self.acc_z.text]];
+    [self.collectAcc addObject:[NSString stringWithFormat:@"%@,%@,%@,%@\n",self.timestamp.text, self.acc_x.text, self.acc_y.text, self.acc_z.text]];
 }
 
 -(void)outputGyroData:(CMRotationRate)rotationRate
@@ -169,6 +253,7 @@
     self.gyro_x.text = [NSString stringWithFormat:@"%f", rotationRate.x];
     self.gyro_y.text = [NSString stringWithFormat:@"%f", rotationRate.y];
     self.gyro_z.text = [NSString stringWithFormat:@"%f", rotationRate.z];
+    
     
     // set the time to the correct format
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
@@ -183,6 +268,9 @@
     self.mag_y.text = [NSString stringWithFormat:@"%f", magneticField.y];
     self.mag_z.text = [NSString stringWithFormat:@"%f", magneticField.z];
     
+    //[mag_x addObject: [NSString stringWithFormat:@"%f", magneticField.x]];
+    
+   
     // set the time to the correct format
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc]init];
     [dateFormatter setDateFormat:@"dd-MM-yy_HH-mm-ss.SSS"];
