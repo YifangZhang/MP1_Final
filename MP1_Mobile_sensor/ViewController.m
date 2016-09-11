@@ -145,8 +145,58 @@
     NSLog(@"y std: %f", y_std);
     NSLog(@"z std: %f", z_std);
     
+    int counter_up = 0;
+    int counter_down = 0;
+    int step_count_up = 0;
+    int step_count_down = 0;
+
+    Boolean up_step = false;
+    Boolean down_step = false;
+    Boolean third_flag = false;
+    Boolean fouth_flag = false;
+    int counter_next = 0;
     
+    for(NSInteger k=0;k<(self.collectAcc.count-1); ++k){
+
+        if((y_vals[k]>(y_avg+y_std))&&(up_step==false)){
+            counter_up = counter_up + 1;
+            
+            if(counter_down>0)
+                counter_down = counter_down - 1;
+        }
+        
+        if((y_vals[k]<(y_avg+y_std))&&(down_step==false)){
+            counter_down = counter_down + 1;
+            
+            if(counter_up>0)
+                counter_up = counter_up - 1;
+
+        }
     
+        if((counter_up > 4)&&(up_step==false)){
+            step_count_up  = step_count_up + 1;
+            up_step = true;
+            down_step = false;
+            
+        }
+        
+        if((counter_down > 4)&&(down_step==false)){
+            step_count_down = step_count_down + 1;
+            if(up_step==true)
+                counter_next = counter_next + 1;
+            
+            up_step = false;
+            down_step = true;
+        }
+    }
+    
+    double steps = (step_count_down + step_count_up)/2;
+    
+    NSLog(@"steps: %f, %i , %i , %i", steps, step_count_down, step_count_up, counter_next);
+    
+    self.result.text = [NSString stringWithFormat:@"%f, %i , %i , %i", steps, step_count_down, step_count_up, counter_next];
+
+
 }
 
 
