@@ -42,6 +42,7 @@
 @property BOOL flag;
 
 - (IBAction)sum:(id)sender;
+- (IBAction)clear:(id)sender;
 
 @property (strong, nonatomic) IBOutlet UILabel *result;
 

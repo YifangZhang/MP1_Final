@@ -33,15 +33,15 @@
     ///////HERE
 
     
-    self.acc_x.text = @"0";
-    self.acc_y.text = @"0";
-    self.acc_z.text = @"0";
-    self.gyro_x.text = @"0";
-    self.gyro_y.text = @"0";
-    self.gyro_z.text = @"0";
-    self.mag_x.text = @"0";
-    self.mag_y.text = @"0";
-    self.mag_z.text = @"0";
+    self.acc_x.text = @"0.0";
+    self.acc_y.text = @"0.0";
+    self.acc_z.text = @"0.0";
+    self.gyro_x.text = @"0.0";
+    self.gyro_y.text = @"0.0";
+    self.gyro_z.text = @"0.0";
+    self.mag_x.text = @"0.0";
+    self.mag_y.text = @"0.0";
+    self.mag_z.text = @"0.0";
     
     // Do any additional setup after loading the view, typically from a nib.
     
@@ -61,7 +61,7 @@
     
     // init the temp file of csv
     self.tempFilePath = [NSTemporaryDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"%@.csv", self.timestamp.text]];
-    NSLog(self.tempFilePath);
+    NSLog((NSString *)self.tempFilePath);
     
 }
 
@@ -80,8 +80,8 @@
         sum = sum + (int)[[self.collectAcc objectAtIndex:i] objectAtIndex:2];
     }
     
-    int avg_acc_y = sum/self.collectAcc.count;/*
-    /*sum = 0;
+    int avg_acc_y = sum/self.collectAcc.count;
+    sum = 0;
     for(NSInteger i = 1; i <self.collectAcc.count; i++){
         sum = sum + (int)[[self.collectAcc objectAtIndex:i] objectAtIndex:3];
     }
@@ -152,8 +152,8 @@
 
     Boolean up_step = false;
     Boolean down_step = false;
-    Boolean third_flag = false;
-    Boolean fouth_flag = false;
+    //Boolean third_flag = false;
+    //Boolean fouth_flag = false;
     int counter_next = 0;
     
     for(NSInteger k=0;k<(self.collectAcc.count-1); ++k){
@@ -194,9 +194,32 @@
     
     NSLog(@"steps: %f, %i , %i , %i", steps, step_count_down, step_count_up, counter_next);
     
-    self.result.text = [NSString stringWithFormat:@"%f, %i , %i , %i", steps, step_count_down, step_count_up, counter_next];
+    self.result.text = [NSString stringWithFormat:@"Step Count: %f", steps];
 
 
+}
+
+- (IBAction)clear:(id)sender {
+    // clean all the arrays
+    self.collectAcc = [[NSMutableArray alloc] init];
+    [self.collectAcc addObject:@"timestamp,Acc_x,Acc_y,Acc_z\n"];
+    self.collectGyro = [[NSMutableArray alloc] init];
+    [self.collectGyro addObject:@"timestamp,Gyro_x,Gyro_y,Gyro_z\n"];
+    self.collectMag = [[NSMutableArray alloc] init];
+    [self.collectMag addObject:@"timestamp,Mag_x,Mag_y,Mag_z\n"];
+    self.collectTime = [[NSMutableArray alloc] init];
+    // clean the front page
+    self.acc_x.text = @"0.0";
+    self.acc_y.text = @"0.0";
+    self.acc_z.text = @"0.0";
+    self.gyro_x.text = @"0.0";
+    self.gyro_y.text = @"0.0";
+    self.gyro_z.text = @"0.0";
+    self.mag_x.text = @"0.0";
+    self.mag_y.text = @"0.0";
+    self.mag_z.text = @"0.0";
+    self.result.text = @"Press Sum After Switch";
+    
 }
 
 
